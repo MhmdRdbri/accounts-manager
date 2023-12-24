@@ -53,36 +53,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
 
 
-# LOGIN
-################################################################
-# class UserLoginSerializer(serializers.Serializer):
-#     phone_number = serializers.CharField()
-#     password = serializers.CharField(style={"input_type": "password"})
-
-#     def validate(self, data):
-#         phone_number = data.get("phone_number")
-#         password = data.get("password")
-
-#         if phone_number and password:
-#             user = CustomUser.objects.filter(phone_number=phone_number).first()
-
-#             if user and user.check_password(password):
-#                 refresh = RefreshToken.for_user(user)
-#                 data["tokens"] = {
-#                     "refresh": str(refresh),
-#                     "access": str(refresh.access_token),
-#                 }
-#             else:
-#                 raise serializers.ValidationError("Incorrect phone number or password.")
-#         else:
-#             raise serializers.ValidationError("Phone number and password are required.")
-
-#         return data
-
-
-from rest_framework_simplejwt.tokens import RefreshToken
-
-
 class UserLoginSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     password = serializers.CharField(style={"input_type": "password"})
@@ -96,16 +66,12 @@ class UserLoginSerializer(serializers.Serializer):
 
             if user and user.check_password(password):
                 refresh = RefreshToken.for_user(user)
-
-                # Get additional user info to include in the token payload
                 additional_info = {
                     "user_id": user.id,
                     "phone_number": user.phone_number,
-                    "is_admin": user.is_admin,  # Modify this based on your model
-                    # Add other desired user info
+                    "is_admin": user.is_admin,
                 }
 
-                # Update the token's payload with additional user info
                 refresh.payload.update(additional_info)
 
                 data["tokens"] = {
@@ -151,6 +117,36 @@ class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
             data["profile"] = None
         return data
 
+    # ------------------
+    def update(self, instance, validated_data):
+        print("Update method called")
+        print(f"Validated Data: {validated_data}")
+        profile_data = validated_data.pop("profile", {})
+        if instance.userprofile:
+            instance.userprofile.age = profile_data.get("age", instance.userprofile.age)
+            instance.userprofile.fullname = profile_data.get(
+                "fullname", instance.userprofile.fullname
+            )
+            instance.userprofile.email = profile_data.get(
+                "email", instance.userprofile.email
+            )
+            instance.userprofile.username = profile_data.get(
+                "username", instance.userprofile.username
+            )
+            instance.userprofile.save(force_update=True)
+
+        instance.phone_number = validated_data.get(
+            "phone_number", instance.phone_number
+        )
+        instance.is_staff = validated_data.get("is_staff", instance.is_staff)
+        instance.is_superuser = validated_data.get(
+            "is_superuser", instance.is_superuser
+        )
+        instance.is_admin = validated_data.get("is_admin", instance.is_admin)
+        instance.save(force_update=True)
+
+        return instance
+
 
 # USER EDIT
 ################################################################
@@ -166,10 +162,8 @@ class PasswordResetSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     age = serializers.IntegerField()
     username = serializers.CharField()
-    # Add other required fields for password reset
 
     def validate(self, data):
-        # Add custom validation logic here, if needed
         return data
 
 
@@ -179,5 +173,4 @@ class NewPasswordSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        # Add custom validation logic here if needed
         return data

@@ -67,16 +67,10 @@ class UserProfileEditView(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        return self.request.user.userprofile  # Retrieve logged-in user's profile
+        return self.request.user.userprofile
 
     def get_queryset(self):
-        return UserProfile.objects.filter(
-            user=self.request.user
-        )  # Filter queryset for the logged-in user
-
-
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView
+        return UserProfile.objects.filter(user=self.request.user)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
