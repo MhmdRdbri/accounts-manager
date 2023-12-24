@@ -139,7 +139,7 @@ class PasswordResetRequestView(GenericAPIView):
 
 
 class SetNewPasswordView(UpdateAPIView):
-    serializer_class = NewPasswordSerializer  # Replace with your actual serializer
+    serializer_class = NewPasswordSerializer
 
     def update(self, request, *args, **kwargs):
         user_id = kwargs.get("user_id")
