@@ -6,8 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # REGISTER
 ################################################################
 class UserProfileSerializer(serializers.ModelSerializer):
-    phone_number = serializers.CharField(
-        source="user.phone_number", read_only=True)
+    phone_number = serializers.CharField(source="user.phone_number", read_only=True)
 
     class Meta:
         model = UserProfile
@@ -18,8 +17,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(required=False)
     phone_number = serializers.CharField()
-    password = serializers.CharField(
-        write_only=True, style={"input_type": "password"})
+    password = serializers.CharField(write_only=True, style={"input_type": "password"})
     password_confirm = serializers.CharField(
         write_only=True, style={"input_type": "password"}
     )
@@ -68,25 +66,12 @@ class UserLoginSerializer(serializers.Serializer):
 
             if user and user.check_password(password):
                 refresh = RefreshToken.for_user(user)
-<<<<<<< HEAD
-
-                # Get additional user info to include in the token payload
-                additional_info = {
-                    "user_id": user.id,
-                    "phone_number": user.phone_number,
-                    "is_admin": user.is_admin,  # Modify this based on your model
-                    # Add other desired user info
-                }
-
-                # Update the token's payload with additional user info
-=======
                 additional_info = {
                     "user_id": user.id,
                     "phone_number": user.phone_number,
                     "is_admin": user.is_admin,
                 }
 
->>>>>>> 3ca20dd1f5fac3575221ebc6627f2adf559bb98f
                 refresh.payload.update(additional_info)
 
                 data["tokens"] = {
@@ -94,11 +79,9 @@ class UserLoginSerializer(serializers.Serializer):
                     "access": str(refresh.access_token),
                 }
             else:
-                raise serializers.ValidationError(
-                    "Incorrect phone number or password.")
+                raise serializers.ValidationError("Incorrect phone number or password.")
         else:
-            raise serializers.ValidationError(
-                "Phone number and password are required.")
+            raise serializers.ValidationError("Phone number and password are required.")
 
         return data
 
@@ -124,7 +107,7 @@ class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
             "is_superuser",
             "profile",
         )
- 
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         try:
@@ -134,30 +117,13 @@ class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
             data["profile"] = None
         return data
 
-<<<<<<< HEAD
-    #------------------
-    def update(self, instance, validated_data):
-        # Update user profile data
-=======
     # ------------------
     def update(self, instance, validated_data):
->>>>>>> 3ca20dd1f5fac3575221ebc6627f2adf559bb98f
         print("Update method called")
         print(f"Validated Data: {validated_data}")
         profile_data = validated_data.pop("profile", {})
         if instance.userprofile:
             instance.userprofile.age = profile_data.get("age", instance.userprofile.age)
-<<<<<<< HEAD
-            instance.userprofile.fullname = profile_data.get("fullname", instance.userprofile.fullname)
-            instance.userprofile.email = profile_data.get("email", instance.userprofile.email)
-            instance.userprofile.username = profile_data.get("username", instance.userprofile.username)
-            instance.userprofile.save(force_update=True)
-
-        # Update user data
-        instance.phone_number = validated_data.get("phone_number", instance.phone_number)
-        instance.is_staff = validated_data.get("is_staff", instance.is_staff)
-        instance.is_superuser = validated_data.get("is_superuser", instance.is_superuser)
-=======
             instance.userprofile.fullname = profile_data.get(
                 "fullname", instance.userprofile.fullname
             )
@@ -176,7 +142,6 @@ class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
         instance.is_superuser = validated_data.get(
             "is_superuser", instance.is_superuser
         )
->>>>>>> 3ca20dd1f5fac3575221ebc6627f2adf559bb98f
         instance.is_admin = validated_data.get("is_admin", instance.is_admin)
         instance.save(force_update=True)
 
@@ -188,10 +153,6 @@ class UserDetailSerializer(serializers.HyperlinkedModelSerializer):
 class UserProfileEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-<<<<<<< HEAD
-        # Fields user can edit
-        fields = ("age", "fullname", "email", "username")
-=======
         fields = ("age", "fullname", "email", "username")
 
 
@@ -213,4 +174,3 @@ class NewPasswordSerializer(serializers.Serializer):
 
     def validate(self, data):
         return data
->>>>>>> 3ca20dd1f5fac3575221ebc6627f2adf559bb98f

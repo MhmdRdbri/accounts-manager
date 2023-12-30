@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 URL configuration for accountsmanager project.
 
@@ -18,8 +17,6 @@ Including another URLconf
 from django.urls import re_path
 from django.contrib.staticfiles import views
 from django.conf import settings
-=======
->>>>>>> 3ca20dd1f5fac3575221ebc6627f2adf559bb98f
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import (
@@ -49,17 +46,11 @@ urlpatterns = [
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("__debug__/", include("debug_toolbar.urls")),
-<<<<<<< HEAD
-
-]
-
-=======
 ]
 
 from django.conf import settings
 from django.contrib.staticfiles import views
 from django.urls import re_path
->>>>>>> 3ca20dd1f5fac3575221ebc6627f2adf559bb98f
 
 if settings.DEBUG:
     urlpatterns += [

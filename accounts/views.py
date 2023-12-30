@@ -15,13 +15,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-<<<<<<< HEAD
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.contrib.auth import get_user_model
-=======
 from rest_framework.generics import RetrieveAPIView, UpdateAPIView
->>>>>>> 3ca20dd1f5fac3575221ebc6627f2adf559bb98f
 
 
 # REGISTER
@@ -67,7 +61,7 @@ class AdminUserListView(ListAPIView):
 class AdminUserDetailView(RetrieveUpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserDetailSerializer
-    permission_classes = [IsAdminUser] 
+    permission_classes = [IsAdminUser]
 
 
 # USER EDIT
@@ -80,17 +74,7 @@ class UserProfileEditView(RetrieveUpdateAPIView):
         return self.request.user.userprofile
 
     def get_queryset(self):
-<<<<<<< HEAD
-        return UserProfile.objects.filter(
-            user=self.request.user
-        )
-
-
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView
-=======
         return UserProfile.objects.filter(user=self.request.user)
->>>>>>> 3ca20dd1f5fac3575221ebc6627f2adf559bb98f
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -122,12 +106,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         return response
 
 
-<<<<<<< HEAD
-@receiver(post_save, sender=get_user_model())
-def create_user_profile(sender, instance, created, **kwargs):
-    if created and not hasattr(instance, 'userprofile'):
-        UserProfile.objects.create(user=instance)
-=======
 # RESET PASSWORD
 # ----------------------------------------------------------------
 class PasswordResetRequestView(GenericAPIView):
@@ -173,4 +151,3 @@ class SetNewPasswordView(UpdateAPIView):
             return Response("Password updated successfully.", status=status.HTTP_200_OK)
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
->>>>>>> 3ca20dd1f5fac3575221ebc6627f2adf559bb98f
