@@ -1,11 +1,10 @@
 from django.db import models
-from django.conf import settings
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
+from django.conf import settings
 
 
 class CustomUserManager(BaseUserManager):
@@ -15,16 +14,6 @@ class CustomUserManager(BaseUserManager):
         user = self.model(phone_number=phone_number, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
-        return user
-
-    def set_new_password(self, user_id, new_password):
-        try:
-            user = self.get(id=user_id)
-        except self.model.DoesNotExist:
-            return None
-
-        user.password = make_password(new_password)
-        user.save()
         return user
 
     def create_superuser(self, phone_number, password=None, **extra_fields):

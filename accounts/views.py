@@ -1,5 +1,3 @@
-from django.shortcuts import redirect
-from django.urls import reverse
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,13 +7,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.generics import RetrieveAPIView, UpdateAPIView
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth import get_user_model
 
 
 # REGISTER
@@ -61,7 +61,7 @@ class AdminUserListView(ListAPIView):
 class AdminUserDetailView(RetrieveUpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserDetailSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser] 
 
 
 # USER EDIT
@@ -74,7 +74,13 @@ class UserProfileEditView(RetrieveUpdateAPIView):
         return self.request.user.userprofile
 
     def get_queryset(self):
-        return UserProfile.objects.filter(user=self.request.user)
+        return UserProfile.objects.filter(
+            user=self.request.user
+        )
+
+
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -106,48 +112,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         return response
 
 
-# RESET PASSWORD
-# ----------------------------------------------------------------
-class PasswordResetRequestView(GenericAPIView):
-    serializer_class = PasswordResetSerializer  # Use your serializer here
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        phone_number = serializer.validated_data.get("phone_number")
-        age = serializer.validated_data.get("age")
-        username = serializer.validated_data.get("username")
-
-        # Verify the user based on provided details
-        try:
-            user_profile = UserProfile.objects.get(
-                user__phone_number=phone_number, age=age, username=username
-            )
-        except UserProfile.DoesNotExist:
-            return Response(
-                "User not found or details are incorrect.",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        reset_password_url = reverse(
-            "accounts:set-new-password", kwargs={"user_id": user_profile.user_id}
-        )
-        return redirect(reset_password_url)
-
-
-class SetNewPasswordView(UpdateAPIView):
-    serializer_class = NewPasswordSerializer
-
-    def update(self, request, *args, **kwargs):
-        user_id = kwargs.get("user_id")
-        new_password = request.data.get("new_password")
-
-        try:
-            user = CustomUser.objects.set_new_password(user_id, new_password)
-            if not user:
-                return Response("User not found.", status=status.HTTP_400_BAD_REQUEST)
-
-            return Response("Password updated successfully.", status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+@receiver(post_save, sender=get_user_model())
+def create_user_profile(sender, instance, created, **kwargs):
+    if created and not hasattr(instance, 'userprofile'):
+        UserProfile.objects.create(user=instance)

@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import *
 
 app_name = "accounts"
@@ -11,14 +12,4 @@ urlpatterns = [
         "admin/users/<int:pk>/", AdminUserDetailView.as_view(), name="admin-user-detail"
     ),
     path("user/profile/edit/", UserProfileEditView.as_view(), name="user-profile-edit"),
-    path(
-        "users/password-reset/",
-        PasswordResetRequestView.as_view(),
-        name="password-reset-request",
-    ),
-    path(
-        "users/set-new-password/<int:user_id>/",
-        SetNewPasswordView.as_view(),
-        name="set-new-password",
-    ),
 ]
