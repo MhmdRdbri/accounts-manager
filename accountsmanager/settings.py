@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,6 +36,10 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,8 +49,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+<<<<<<< HEAD
+    'corsheaders',
+=======
     "drf_spectacular",
     "corsheaders",
+>>>>>>> 3ca20dd1f5fac3575221ebc6627f2adf559bb98f
     "debug_toolbar",
     "rest_framework",
     "accounts",
@@ -54,6 +63,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -83,6 +93,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "accountsmanager.wsgi.application"
 
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Replace with your React app's URL
+]
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

@@ -65,4 +65,4 @@ class UserProfile(models.Model):
     username = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return f"Profile of {self.user.phone_number}"
+        return f"Profile of {self.user.phone_number}" 
