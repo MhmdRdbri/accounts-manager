@@ -61,7 +61,7 @@ class AdminUserListView(ListAPIView):
 class AdminUserDetailView(RetrieveUpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserDetailSerializer
-    permission_classes = [IsAdminUser] 
+    permission_classes = [IsAdminUser]
 
 
 # USER EDIT
@@ -74,13 +74,23 @@ class UserProfileEditView(RetrieveUpdateAPIView):
         return self.request.user.userprofile
 
     def get_queryset(self):
-        return UserProfile.objects.filter(
-            user=self.request.user
-        )
+        return UserProfile.objects.filter(user=self.request.user)
 
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        phone_number = serializer.validated_data.pop(
+            "phone_number", None
+        )  # Extract phone_number if present
 
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView
+        # Update phone number if provided
+        if phone_number:
+            self.request.user.phone_number = phone_number
+            self.request.user.save()
+
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -114,5 +124,5 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 @receiver(post_save, sender=get_user_model())
 def create_user_profile(sender, instance, created, **kwargs):
-    if created and not hasattr(instance, 'userprofile'):
+    if created and not hasattr(instance, "userprofile"):
         UserProfile.objects.create(user=instance)

@@ -8,12 +8,28 @@ from django.conf import settings
 
 
 class CustomUserManager(BaseUserManager):
+    # def create_user(self, phone_number, password=None, **extra_fields):
+    #     if not phone_number:
+    #         raise ValueError("The Phone Number must be set")
+    #     user = self.model(phone_number=phone_number, **extra_fields)
+    #     user.set_password(password)
+    #     user.save(using=self._db)
+    #     return user
+
     def create_user(self, phone_number, password=None, **extra_fields):
         if not phone_number:
             raise ValueError("The Phone Number must be set")
+
+        profile_data = extra_fields.pop(
+            "profile", {}
+        )  # Extract profile data if provided
         user = self.model(phone_number=phone_number, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+
+        if profile_data:
+            UserProfile.objects.create(user=user, **profile_data)
+
         return user
 
     def create_superuser(self, phone_number, password=None, **extra_fields):
@@ -54,4 +70,4 @@ class UserProfile(models.Model):
     username = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return f"Profile of {self.user.phone_number}" 
+        return f"Profile of {self.user.phone_number}"
