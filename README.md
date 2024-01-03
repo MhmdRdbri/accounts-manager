@@ -24,12 +24,12 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-
+  <img src='https://a3h4z5g5.rocketcdn.me/wp-content/uploads/2018/08/img-1-1.png'>
   <h3 align="center">Account Manager</h3>
   <h4 align="center">(Admin Panel)</h4>
 
   <p align="center">
-    An awesome Admin Manager for handling user informations and authorization
+    An awesome Admin Manager for handling user authentication and authorization
     <br />
   </p>
 </div>
