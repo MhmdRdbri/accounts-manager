@@ -123,8 +123,8 @@ _Below is an example of how you can instruct your audience on installing and set
    ```sh
    npm install
    ```
-4. Intsall Django paclages
-   ```py
+4. Intsall Django packages
+   ```python
    pip install -r requirements.py
    ```
 
