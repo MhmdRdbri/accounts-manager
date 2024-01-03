@@ -88,7 +88,7 @@ Here's why:
 
 ### Built With
 
-* [![Python][Python.org]][Python-url]
+* https://github.com/devicons/devicon/raw/master/icons/python/python-original.svg
 * [![React][React.js]][React-url]
 * [![Vue][Vue.js]][Vue-url]
 * [![Angular][Angular.io]][Angular-url]
